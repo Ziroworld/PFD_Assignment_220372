@@ -81,3 +81,4 @@ public class VenueDecoration {
 
 // time complexity :  O(n*k^2)
 // space complexity : O(n*k)
+// used Dynamic Programming approach due to multiple recursion. 

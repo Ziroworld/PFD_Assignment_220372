@@ -67,3 +67,29 @@ public class SpaceshipMission {
     Space Complexity: O(1), constant space used.
     Algorithm Used: Greedy approach with optimal splitting decisions to minimize total time.
  */
+
+/*
+Example:
+ Engines: [3, 4, 5, 2]
+ Split Cost: 2
+ 
+ Initial state: 1 engineer
+ 
+ 1. Split engineers (Time: 2)
+    Total time: 2
+    Engineers: 2
+ 
+ 2. Assign each engineer (Time: 3 + 4)
+    Total time: 9
+    Engineers: 2
+ 
+ 3. Split engineers (Time: 2)
+    Total time: 11
+    Engineers: 4
+ 
+ 4. Assign each engineer (Time: 2 + 5)
+    Total time: 18
+    Engineers: 4
+ 
+ Total Time: 18
+ */
