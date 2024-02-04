@@ -29,11 +29,13 @@
         After these 5 moves, the number of dresses in each sewing machine is equalized to 1. Therefore, the minimum
         number of moves required to equalize the number of dresses is 5.
 
- */
-
+        */
+        
+// Time Complexity: O(n) where n is the number of sewing machines.
+// Space Complexity: O(1) constant amount of space.
+// Algorithm: Greedy Algorithm
 package Task2;
 
-import java.util.Arrays;
 
 public class DressEqualizer {
 
@@ -76,14 +78,11 @@ public class DressEqualizer {
     public static void main(String[] args) {
         int[] machines = {2, 1, 3, 0, 2};
         int result = minMovesToEqualize(machines);
-        System.out.println("Input: " + Arrays.toString(machines));
-        System.out.println("Minimum moves to equalize: " + result);
+        System.out.println("The number of moves required to equalize the number of " +
+        "dresses in the production line is : "+result+".\n");
     }
 }
 
-// Time Complexity: O(n) where n is the number of sewing machines.
-// Space Complexity: O(1) constant amount of space.
-// Algorithm: Greedy Algorithm
 
 // Pseudo Code
 /*
