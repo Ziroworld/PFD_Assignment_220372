@@ -37,7 +37,7 @@
 package Task2;
 
 
-public class DressEqualizer {
+public class Dressloop {
 
     public static int minMovesToEqualize(int[] machines) {
         int totalDresses = 0;

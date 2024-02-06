@@ -23,7 +23,7 @@
 
 package Task1;
 
-public class VenueDecoration {
+public class Decorator {
     public static int minCost(int[][] costs) {
 
         // return 0 if the matrix is empty
@@ -74,7 +74,7 @@ public class VenueDecoration {
     public static void main(String[] args) {
         int[][] costs = {{1, 3, 2}, {4, 6, 8}, {3, 1, 5}};
         int result = minCost(costs);
-        System.out.println("Minimum cost to decorate all venues: " + result);
+        System.out.println("Well Minimum cost to decorate all venues: " + result);
     }
 }
 

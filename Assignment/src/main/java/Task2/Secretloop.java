@@ -24,11 +24,11 @@ package Task2;
 
 import java.util.*;
 
-public class SecretSharing {
+public class Secretloop {
 
-    public static List<Integer> findIndividuals(int n, int [][] intervals, int firstPerson, String secretMessage) {
-        Set<Integer> knownIndividuals = new HashSet<Integer>();
-        knownIndividuals.add(firstPerson); // person 0 knows the secret
+    public static List<Integer> findIndividuals(int n, int [][] intervals, int p1, String secretMessage) {
+        Set<Integer> aunty = new HashSet<Integer>();
+        aunty.add(p1); // person 0 knows the secret
 
         for (int[] interval: intervals) {
             int start = interval[0];
@@ -36,12 +36,12 @@ public class SecretSharing {
 
             // Add individuals who received the secret during this interval
             for (int i = start; i <= end; i++) {
-                knownIndividuals.add(i);
+                aunty.add(i);
             }
         }
-        // System.out.println("Individuals who eventually know the secret: " + knownIndividuals);
+        // System.out.println("Individuals who eventually know the secret: " + aunty);
         
-        return new ArrayList<>(knownIndividuals);
+        return new ArrayList<>(aunty);
     }
     public static void main(String[] args) {
         int n = 5;

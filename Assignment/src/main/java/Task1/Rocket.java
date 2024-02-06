@@ -32,7 +32,7 @@
 
 package Task1;
 
-public class SpaceshipMission {
+public class Rocket {
 
     public static int minTimeToBuildEngines(int[] engines, int splitCost) {
         int engineers = 1; // Initial number of engineers
