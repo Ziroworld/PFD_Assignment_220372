@@ -75,18 +75,17 @@ public class Tree {
     public static void main(String[] args) {
         Tree bst = new Tree();
         Node root = null;
+        
         // Creating the BST
-        root = bst.createBST(root, 40);
-        root = bst.createBST(root, 30);
-        root = bst.createBST(root, 20);
-        root = bst.createBST(root, 50);
-        root = bst.createBST(root, 60);
-        root = bst.createBST(root, 10);
-        root = bst.createBST(root, 35);
+        root = bst.createBST(root, 3);
+        root = bst.createBST(root, 4);
+        root = bst.createBST(root, 1);
+        root = bst.createBST(root, 2);
+        root = bst.createBST(root, 5);
 
-        double target = 33;
-        int k = 3;
-        List<Integer> closestValues = bst.findClosest(root, target, k);
+        double target = 3.8;
+        int x = 2;
+        List<Integer> closestValues = bst.findClosest(root, target, x);
         System.out.println("Closest values to " + target + " are: " + closestValues);
     }
 }

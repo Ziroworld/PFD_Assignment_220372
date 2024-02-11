@@ -32,64 +32,50 @@
 
 package Task1;
 
+import java.util.Arrays;
+
 public class Rocket {
 
-    public static int minTimeToBuildEngines(int[] engines, int splitCost) {
-        int engineers = 1; // Initial number of engineers
-        int totalTime = 0; // Total time required
+    
+    public static int engineTime(int[] engines, int splitCost) {
+        Arrays.sort(engines); 
 
-        for (int time : engines) {
-            if (engineers > 1) {
-                // If there are more than 1 engineer, split them (in parallel)
-                totalTime += splitCost;
-                engineers--;
+        int max = engines.length;
+        int[] dp = new int[max + 1]; // Dp array
+
+        // Initialize dp
+        Arrays.fill(dp, Integer.MAX_VALUE - splitCost);
+
+        // feed initial values
+        dp[1] = engines[0];
+
+        // Iterate through each engine
+        for (int i = 2; i <= max; i++) {
+            // Iterate from current enginer down to 1 
+            for (int j = i; j >= 1; j--) {
+                int time = Math.max(dp[j], engines[i - 1]); // Time to build current engine
+                // If more than 1 engineer, add splitting cost
+                if (j > 1) {
+                    time = Math.min(time, dp[j / 2] + splitCost);
+                }
+                // Update min time for current no of engineer
+                dp[i] = Math.min(dp[i], time);
             }
-
-            // Assign each engineer to build an engine
-            totalTime += time;
-            engineers *= 2; // Engineers split into two
         }
-
-        return totalTime;
+        return dp[max]; // Return value
     }
 
     public static void main(String[] args) {
         int[] engines = {3, 4, 5, 2};
         int splitCost = 2;
 
-        int result = minTimeToBuildEngines(engines, splitCost);
-        System.out.println("Minimum time to build all engines: " + result);
+        int minTime = engineTime(engines, splitCost);
+        System.out.println("Minimum time needed to build all engines: " + minTime);
     }
 }
 
 /*
- *  Time Complexity: O(N), where N is the number of engines.
-    Space Complexity: O(1), constant space used.
-    Algorithm Used: Greedy approach with optimal splitting decisions to minimize total time.
- */
-
-/*
-Example:
- Engines: [3, 4, 5, 2]
- Split Cost: 2
- 
- Initial state: 1 engineer
- 
- 1. Split engineers (Time: 2)
-    Total time: 2
-    Engineers: 2
- 
- 2. Assign each engineer (Time: 3 + 4)
-    Total time: 9
-    Engineers: 2
- 
- 3. Split engineers (Time: 2)
-    Total time: 11
-    Engineers: 4
- 
- 4. Assign each engineer (Time: 2 + 5)
-    Total time: 18
-    Engineers: 4
- 
- Total Time: 18
+ *  Time Complexity: O(n^2), where N is the number of engines.
+    Space Complexity: O(n), where N is the number of engines.
+    Algorithm Used: Dynamic algorithm used in this solution.
  */

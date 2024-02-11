@@ -39,61 +39,38 @@ package Task2;
 
 public class Dressloop {
 
-    public static int minMovesToEqualize(int[] machines) {
-        int totalDresses = 0;
-        int n = machines.length;
+    public static int Equalizer(int[] m) {
+        int sum = 0;
+        int n = m.length;
 
-        // Calculate total dresses
-        for (int dresses : machines) {
-            totalDresses += dresses;
+        // Calculate the sum number of dresses
+        for (int dresses : m) {
+            sum += dresses;
         }
 
-        // Check if equal distribution is possible
-        if (totalDresses % n != 0) {
+        // If sum dresses cannot be evenly distributed, return -1
+        if (sum % n != 0) {
             return -1;
         }
 
-        // Calculate target dresses for each machine
-        int targetDresses = totalDresses / n;
-
+        // Calculate the target number of dresses for each machine
+        int target = sum / n;
         int moves = 0;
-        int balance = 0;
 
-        // Iterate through machines and perform greedy adjustments
-        for (int dresses : machines) {
-            // Calculate imbalance for the current machine
-            balance += dresses - targetDresses;
-
-            // Accumulate moves by taking absolute imbalance
-            // as we are moving dresses between adjacent machines
-            moves += Math.abs(balance);
-
-            // Update balance for the next machine
-            balance = Math.max(balance, 0);
+        // Iterate until all machines have the target dress count
+        for (int dresses : m) {
+            // Calculate the difference between current dresses and the target
+            int diff = dresses - target;
+            // Accumulate moves needed to equalize dresses
+            if (diff > 0) {
+                moves += diff;
+            }
         }
-
         return moves;
     }
 
     public static void main(String[] args) {
-        int[] machines = {2, 1, 3, 0, 2};
-        int result = minMovesToEqualize(machines);
-        System.out.println("The number of moves required to equalize the number of " +
-        "dresses in the production line is : "+result+".\n");
+        int[] machine = {1, 0, 5};
+        System.out.println(Equalizer(machine)); // Output: 2
     }
 }
-
-
-// Pseudo Code
-/*
-1. Calculate the total number of dresses (sum) across all sewing machines.
-2. If sum is not divisible by the number of machines (n), return -1 (it's impossible to equalize).
-3. Calculate the target number of dresses for each machine (target = sum / n).
-4. Initialize a variable to track the total number of moves required.
-5. Loop through the array of sewing machines:
-    a. For each machine, calculate the difference between the current number of dresses and the target.
-    b. Add this difference to a running difference total (this tracks the net dresses passed along the line).
-    c. The absolute value of the running difference at each step is the minimum number of moves required up to that point.
-    d. Update the total number of moves required with the maximum of its current value or the absolute running difference.
-6. Return the total number of moves required.
-*/
