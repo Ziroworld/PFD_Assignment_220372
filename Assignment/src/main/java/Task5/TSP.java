@@ -6,212 +6,168 @@
 
 
 package Task5;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class TSP {
-
-    private final int numAnts;
-    private final int numCities;
-    private final double[][] distanceMatrix;
     private double[][] pheromoneMatrix;
-    private final double alpha;
-    private final double beta;
-    private final double evaporationRate;
-    private final double initialPheromone;
+    private int[][] distanceMatrix;
+    private int numberOfNodes;
+    private int numberOfAnts;
+    private int sourceNode;
+    private int destinationNode;
+    private double alpha;
+    private double beta;
+    private double evaporationRate;
+    private double initialPheromone;
 
-    private List<Integer> bestTour;
-    private double bestTourLength;
-
-    // Constructor
-    public TSP(int numAnts, int numCities, double[][] distanceMatrix,
-               double alpha, double beta, double evaporationRate, double initialPheromone) {
-        this.numAnts = numAnts;
-        this.numCities = numCities;
-        this.distanceMatrix = distanceMatrix;
+    public TSP(int numberOfNodes, int numberOfAnts, int sourceNode, int destinationNode,
+                              double alpha, double beta, double evaporationRate, double initialPheromone) {
+        this.numberOfNodes = numberOfNodes;
+        this.numberOfAnts = numberOfAnts;
+        this.sourceNode = sourceNode;
+        this.destinationNode = destinationNode;
         this.alpha = alpha;
         this.beta = beta;
         this.evaporationRate = evaporationRate;
         this.initialPheromone = initialPheromone;
-
-        this.pheromoneMatrix = new double[numCities][numCities];
-        initializePheromones();
-
-        this.bestTour = new ArrayList<>();
-        this.bestTourLength = Double.POSITIVE_INFINITY;
+        pheromoneMatrix = new double[numberOfNodes][numberOfNodes];
+        distanceMatrix = new int[numberOfNodes][numberOfNodes];
     }
 
-    // Initialize pheromones
-    private void initializePheromones() {
-        for (int i = 0; i < numCities; i++) {
-            Arrays.fill(pheromoneMatrix[i], initialPheromone);
+    public void initializePheromoneMatrix() {
+        for (int i = 0; i < numberOfNodes; i++) {
+            for (int j = 0; j < numberOfNodes; j++) {
+                pheromoneMatrix[i][j] = initialPheromone;
+            }
         }
     }
 
-    // Find the best tour using ant colony optimization
-    public List<Integer> findBestTour(int maxIterations) {
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            List<List<Integer>> antTours = generateAntTours();
-            updatePheromones(antTours);
-            updateBestTour(antTours);
-
-            evaporatePheromones();
-        }
-
-        return bestTour;
+    public void initializeDistanceMatrix(int[][] distanceMatrix) {
+        this.distanceMatrix = distanceMatrix;
     }
 
-    // Generate ant tours
-    private List<List<Integer>> generateAntTours() {
-        List<List<Integer>> antTours = new ArrayList<>();
-        for (int ant = 0; ant < numAnts; ant++) {
-            int startCity = new Random().nextInt(numCities);
-            antTours.add(constructTour(startCity));
-        }
-        return antTours;
-    }
+    public List<Integer> findShortestPath() {
+        Random random = new Random();
+        List<Integer> bestPath = null;
+        int bestDistance = Integer.MAX_VALUE;
 
-    // Construct a tour for a given ant
-    private List<Integer> constructTour(int startCity) {
-        List<Integer> tour = new ArrayList<>();
-        boolean[] visited = new boolean[numCities];
-        int currentCity = startCity;
+        for (int iteration = 0; iteration < numberOfAnts; iteration++) {
+            List<Integer> antPath = constructAntPath(sourceNode, destinationNode, random);
+            int antDistance = calculatePathDistance(antPath);
 
-        tour.add(startCity);
-        visited[startCity] = true;
+            if (antDistance < bestDistance) {
+                bestDistance = antDistance;
+                bestPath = antPath;
+            }
 
-        for (int step = 1; step < numCities; step++) {
-            int nextCity = selectNextCity(currentCity, visited);
-            tour.add(nextCity);
-            visited[nextCity] = true;
-            currentCity = nextCity;
+            updatePheromoneTrail(antPath, antDistance);
         }
 
-        return tour;
+        return bestPath;
     }
 
-    // Select the next city for an ant
-    private int selectNextCity(int currentCity, boolean[] visited) {
-        List<Integer> candidateCities = new ArrayList<>();
+    private List<Integer> constructAntPath(int source, int destination, Random random) {
+        List<Integer> antPath = new ArrayList<>();
+        boolean[] visitedNodes = new boolean[numberOfNodes];
+        int currentNode = source;
 
-        for (int city = 0; city < numCities; city++) {
-            if (!visited[city]) {
-                candidateCities.add(city);
+        antPath.add(currentNode);
+        visitedNodes[currentNode] = true;
+
+        while (currentNode != destination) {
+            int nextNode = selectNextNode(currentNode, visitedNodes, random);
+            antPath.add(nextNode);
+            visitedNodes[nextNode] = true;
+            currentNode = nextNode;
+        }
+
+        return antPath;
+    }
+
+    private int selectNextNode(int currentNode, boolean[] visitedNodes, Random random) {
+        double[] probabilities = new double[numberOfNodes];
+        double probabilitiesSum = 0.0;
+
+        for (int node = 0; node < numberOfNodes; node++) {
+            if (!visitedNodes[node]) {
+                double pheromoneLevel = Math.pow(pheromoneMatrix[currentNode][node], alpha);
+                double distance = 1.0 / Math.pow(distanceMatrix[currentNode][node], beta);
+                probabilities[node] = pheromoneLevel * distance;
+                probabilitiesSum += probabilities[node];
             }
         }
 
-        double[] probabilities = calculateProbabilities(currentCity, candidateCities, visited);
-        return selectByProbability(probabilities);
-    }
-
-    // Calculate probabilities for selecting each candidate city
-    private double[] calculateProbabilities(int currentCity, List<Integer> candidateCities, boolean[] visited) {
-        double[] probabilities = new double[candidateCities.size()];
-        double totalProbability = 0.0;
-
-        for (int i = 0; i < candidateCities.size(); i++) {
-            int nextCity = candidateCities.get(i);
-            double pheromone = Math.pow(pheromoneMatrix[currentCity][nextCity], alpha);
-            double visibility = Math.pow(1.0 / distanceMatrix[currentCity][nextCity], beta);
-            probabilities[i] = pheromone * visibility;
-            totalProbability += probabilities[i];
-        }
-
-        for (int i = 0; i < probabilities.length; i++) {
-            probabilities[i] /= totalProbability;
-        }
-
-        return probabilities;
-    }
-
-    // Select a city based on probabilities
-    private int selectByProbability(double[] probabilities) {
-        double randomValue = new Random().nextDouble();
+        double randomValue = random.nextDouble();
         double cumulativeProbability = 0.0;
 
-        for (int i = 0; i < probabilities.length; i++) {
-            cumulativeProbability += probabilities[i];
-            if (randomValue <= cumulativeProbability) {
-                return i;
-            }
-        }
+        for (int node = 0; node < numberOfNodes; node++) {
+            if (!visitedNodes[node]) {
+                double probability = probabilities[node] / probabilitiesSum;
+                cumulativeProbability += probability;
 
-        return probabilities.length - 1;
-    }
-
-    // Update pheromones based on ant tours
-    private void updatePheromones(List<List<Integer>> antTours) {
-        for (int i = 0; i < numCities; i++) {
-            for (int j = 0; j < numCities; j++) {
-                if (i != j) {
-                    pheromoneMatrix[i][j] *= (1 - evaporationRate);
+                if (randomValue <= cumulativeProbability) {
+                    return node;
                 }
             }
         }
 
-        for (List<Integer> tour : antTours) {
-            double pheromoneIncrement = 1.0 / calculateTourLength(tour);
-            for (int i = 0; i < numCities - 1; i++) {
-                int cityA = tour.get(i);
-                int cityB = tour.get(i + 1);
-                pheromoneMatrix[cityA][cityB] += pheromoneIncrement;
-                pheromoneMatrix[cityB][cityA] += pheromoneIncrement;
-            }
+        return -1; // Unreachable code, should never happen
+    }
+
+    private int calculatePathDistance(List<Integer> path) {
+        int distance = 0;
+        int pathSize = path.size();
+
+        for (int i = 0; i < pathSize - 1; i++) {
+            int currentNode = path.get(i);
+            int nextNode = path.get(i + 1);
+            distance += distanceMatrix[currentNode][nextNode];
+        }
+
+        return distance;
+    }
+
+    private void updatePheromoneTrail(List<Integer> path, int distance) {
+        double pheromoneDeposit = 1.0 / distance;
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            int currentNode = path.get(i);
+            int nextNode = path.get(i + 1);
+
+            pheromoneMatrix[currentNode][nextNode] = (1 - evaporationRate) * pheromoneMatrix[currentNode][nextNode]
+                    + evaporationRate * pheromoneDeposit;
+
+            pheromoneMatrix[nextNode][currentNode] = (1 - evaporationRate) * pheromoneMatrix[nextNode][currentNode]
+                    + evaporationRate * pheromoneDeposit; // Corrected line
         }
     }
 
-    // Update the best tour based on ant tours
-    private void updateBestTour(List<List<Integer>> antTours) {
-        for (List<Integer> tour : antTours) {
-            double tourLength = calculateTourLength(tour);
-            if (tourLength < bestTourLength) {
-                bestTour = new ArrayList<>(tour);
-                bestTourLength = tourLength;
-            }
-        }
-    }
-
-    // Evaporate pheromones
-    private void evaporatePheromones() {
-        for (int i = 0; i < numCities; i++) {
-            for (int j = 0; j < numCities; j++) {
-                if (i != j) {
-                    pheromoneMatrix[i][j] *= (1 - evaporationRate);
-                }
-            }
-        }
-    }
-
-    // Calculate the length of a tour
-    private double calculateTourLength(List<Integer> tour) {
-        double length = 0.0;
-        for (int i = 0; i < numCities - 1; i++) {
-            int cityA = tour.get(i);
-            int cityB = tour.get(i + 1);
-            length += distanceMatrix[cityA][cityB];
-        }
-        return length;
-    }
-
-    // Main method for example usage
     public static void main(String[] args) {
-        int numCities = 5;
-        double[][] distanceMatrix = {
-            {0, 2, 3, 4, 5},
-            {2, 0, 6, 7, 8},
-            {3, 6, 0, 9, 10},
-            {4, 7, 9, 0, 11},
-            {5, 8, 10, 11, 0}
+        // Example usage
+        int[][] distanceMatrix = {
+                {0, 2, 3, 4},
+                {2, 0, 6, 1},
+                {3, 6, 0, 2},
+                {4, 1, 2, 0}
         };
+        int numberOfNodes = 4;
+        int numberOfAnts = 10;
+        int sourceNode = 0;
+        int destinationNode = 3;
+        double alpha = 1.0;
+        double beta = 2.0;
+        double evaporationRate = 0.5;
+        double initialPheromone = 0.1;
 
-        TSP tsp = new TSP(10, numCities, distanceMatrix, 1.0, 2.0, 0.5, 0.1);
-        List<Integer> bestTour = tsp.findBestTour(1000);
+        TSP antColony = new TSP(numberOfNodes, numberOfAnts,
+                sourceNode, destinationNode, alpha, beta, evaporationRate, initialPheromone);
 
-        System.out.println("Best Tour: " + bestTour);
-        System.out.println("Best Tour Length: " + tsp.bestTourLength);
+        antColony.initializePheromoneMatrix();
+        antColony.initializeDistanceMatrix(distanceMatrix);
+
+        List<Integer> shortestPath = antColony.findShortestPath();
+        System.out.println("Shortest path: " + shortestPath);
     }
 }
-
