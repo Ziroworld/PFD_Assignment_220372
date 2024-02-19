@@ -34,11 +34,10 @@
 // Time Complexity: O(n) where n is the number of sewing machines.
 // Space Complexity: O(1) constant amount of space.
 // Algorithm: Greedy Algorithm
+
 package Task2;
 
-
 public class Dressloop {
-
     public static int Equalizer(int[] m) {
         int sum = 0;
         int n = m.length;
@@ -68,9 +67,8 @@ public class Dressloop {
         }
         return moves;
     }
-
     public static void main(String[] args) {
         int[] machine = {1, 0, 5};
-        System.out.println(Equalizer(machine)); // Output: 2
+        System.out.println(Equalizer(machine)); // Output: 3
     }
 }

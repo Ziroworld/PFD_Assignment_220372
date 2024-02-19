@@ -31,15 +31,11 @@
  */
 
 package Task1;
-
 import java.util.Arrays;
 
 public class Rocket {
-
-    
     public static int engineTime(int[] engines, int splitCost) {
         Arrays.sort(engines); 
-
         int max = engines.length;
         int[] dp = new int[max + 1]; // Dp array
 
@@ -64,11 +60,9 @@ public class Rocket {
         }
         return dp[max]; // Return value
     }
-
     public static void main(String[] args) {
         int[] engines = {3, 4, 5, 2};
         int splitCost = 2;
-
         int minTime = engineTime(engines, splitCost);
         System.out.println("Minimum time needed to build all engines: " + minTime);
     }

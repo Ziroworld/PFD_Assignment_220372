@@ -1,4 +1,30 @@
+/*
+    Task 6
+    Implement a Multithreaded Asynchronous Image Downloader in Java Swing
+    Task Description:
+    You are tasked with designing and implementing a multithreaded asynchronous image downloader in a Java Swing
+    application. The application should allow users to enter a URL and download images from that URL in the
+    background, while keeping the UI responsive. The image downloader should utilize multithreading and provide a
+    smooth user experience when downloading images.
+    Requirements:
+    Design and implement a GUI application that allows users to enter a URL and download images.
+    Implement a multithreaded asynchronous framework to handle the image downloading process in the background.
+    Provide a user interface that displays the progress of each image download, including the current download status
+    and completion percentage.
+    Utilize a thread pool to manage the concurrent downloading of multiple images, ensuring efficient use of system
+    resources.
+    Implement a mechanism to handle downloading errors or exceptions, displaying appropriate error messages to the
+    user.
+    Use thread synchronization mechanisms, such as locks or semaphores, to ensure data integrity and avoid conflicts
+    during image downloading.
+    Provide options for the user to pause, resume, or cancel image downloads.
+    Test the application with various URLs containing multiple images to verify its functionality and responsiveness.
+    Include proper error handling and reporting for cases such as invalid URLs or network failures
+ */
+
+
 package Task6;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
